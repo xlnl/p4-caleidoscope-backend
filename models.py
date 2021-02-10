@@ -30,7 +30,6 @@ class Event(BaseModel):
     location = CharField()
     description = TextField()
 
-
 class PersonNote(BaseModel):
     person = ForeignKeyField(Person, backref='notes')
     note = ForeignKeyField(Note, backref='owner')
