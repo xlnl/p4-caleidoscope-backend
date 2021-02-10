@@ -24,3 +24,45 @@ def get_all_notes():
         return jsonify(
             data={}, 
             status={"code": 401, "message": "Error getting the resources"})
+
+
+@note.route('/<note_id>', methods=["GET"])
+def get_note(note_id):
+    try:
+        note = models.Note.get_by_id(note_id)
+        note_dict = model_to_dict(note)
+        return jsonify(
+            data=note_dict, 
+            status={"code": 201, "message": "Success"})
+    except models.DoesNotExist:
+        return jsonify(
+            data={}, 
+            status={"code": 401, "message": "Error getting the resources"})
+
+@note.route('/<note_id>/update', methods=["PUT"])
+def update_note(note_id):
+    try:
+        payload = request.get_json()
+        query = models.Note.update(**payload).where(models.Note.id==note_id)
+        query.execute()
+        updated_note = model_to_dict(models.Note.get_by_id(note_id))
+        return jsonify(
+            data=updated_note, 
+            status={"code": 200, "message": "Success"})
+    except models.DoesNotExist:
+        return jsonify(
+            data={}, 
+            status={"code": 401, "message": "Error getting the resources"})
+
+@note.route('/<note_id>', methods=["Delete"])
+def delete_note(note_id):
+    try: 
+        note_to_delete = models.Note.get_by_id(note_id)
+        note_to_delete.delete_instance()
+        return jsonify(
+            data={}, 
+            status={"code": 200, "message": "Success, resources successfully delete"})
+    except models.DoesNotExist:
+        return jsonify(
+            data={}, 
+            status={"code": 401, "message": "Error getting the resources"})
