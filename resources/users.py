@@ -12,6 +12,7 @@ def register():
     ## see request payload anagolous to req.body in express
     payload = request.get_json()
     payload['email'].lower()
+    payload['username'].lower()
     
     try:
         # does the user already exist/is the username taken?
@@ -25,7 +26,7 @@ def register():
         payload['password'] = generate_password_hash(payload['password'])
         Person = models.Person.create(**payload)
         
-        login_person(person)
+        login_user(person)
 
         person_dict = model_to_dict(person)
 
@@ -38,17 +39,17 @@ def register():
 @person.route('/login', methods=["POST"])
 def login():
     payload = request.get_json()
-    payload['email'].lower()
+    payload['username'].lower()
 
     try:
-        person = models.Person.get(models.Person.email == payload['email'])
+        person = models.Person.get(models.Person.username == payload['username'])
 
         person_dict = model_to_dict(person)
 
         # check_password_hash(hashed_pw_from_db, unhashed_pw_from_payload)
         if(check_password_hash(person_dict['password'], payload['password'])):
-            del user_dict['password']
-            login_person(person)
+            del person_dict['password']
+            login_user(person)
             return jsonify(
                 data=person_dict,
                 status={"code": 201, "message": "Success! Logged in user"})
@@ -65,8 +66,8 @@ def login():
 
 @person.route('/logout', methods=["GET", "POST"])
 def logout():
-    if current_person:
-        logout_person()
+    if current_user:
+        logout_user()
         return jsonify(
             data={},
             status={"code": 200, "message": "Success! Logged out user"})

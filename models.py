@@ -14,6 +14,7 @@ class Person(UserMixin, BaseModel):
     email = CharField(unique=True)
     password = CharField()
     city = CharField()
+    country = CharField()
     zodiacSign = CharField()
 
 class Note(BaseModel):
