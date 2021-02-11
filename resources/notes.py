@@ -2,6 +2,7 @@ import models
 
 from flask import Blueprint, jsonify, request
 from playhouse.shortcuts import model_to_dict
+from flask_login import current_user
 
 note = Blueprint('notes', 'note')
 
@@ -25,6 +26,13 @@ def get_all_notes():
             data={}, 
             status={"code": 401, "message": "Error getting the resources"})
 
+@note.route('/', methods=["POST"])
+def create_note():
+    ## see request payload anagolous to req.body in express
+    payload = request.get_json()
+    note = models.Note.create(**payload)
+    note_dict = model_to_dict(note)
+    return jsonify(data=note_dict, status={"code": 201, "message": "Success"})
 
 @note.route('/<note_id>', methods=["GET"])
 def get_note(note_id):

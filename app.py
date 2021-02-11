@@ -4,8 +4,6 @@ from flask_login import LoginManager
 
 import models
 from resources.users import person
-from resources.user_notes import user_note
-from resources.user_events import user_event
 from resources.notes import note
 from resources.events import event
 
@@ -37,10 +35,9 @@ def after_request(response):
 
 CORS(app, origins=['http://localhost:3000'], supports_credentials=True) 
 
+app.register_blueprint(person, url_prefix='/api/v1/user')
 app.register_blueprint(note, url_prefix='/api/v1/note')
-app.register_blueprint(person, url_prefix='/api/v1/users')
-app.register_blueprint(user_note, url_prefix='/api/v1/user_note')
-app.register_blueprint(user_event, url_prefix='/api/v1/user_event')
+app.register_blueprint(event, url_prefix='/api/v1/event')
 # express equivalent = app.use('/api/v1/note')
 
 @app.route('/')

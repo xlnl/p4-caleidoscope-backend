@@ -20,6 +20,7 @@ class Person(UserMixin, BaseModel):
 class Note(BaseModel):
     block = TextField()
     created_at = DateTimeField(default=datetime.datetime.now)
+    person = ForeignKeyField(Person, backref='notes')
 
 class Event(BaseModel):
     title = CharField()
@@ -29,17 +30,10 @@ class Event(BaseModel):
     endTime = TimeField()
     location = CharField()
     description = TextField()
-
-class PersonNote(BaseModel):
-    person = ForeignKeyField(Person, backref='notes')
-    note = ForeignKeyField(Note, backref='owner')
-
-class PersonEvent(BaseModel):
     person = ForeignKeyField(Person, backref='events')
-    event = ForeignKeyField(Event, backref='owner')
 
 def initialize():
     DATABASE.connect()
-    DATABASE.create_tables([Person, Note, Event, PersonNote, PersonEvent], safe=True) 
+    DATABASE.create_tables([Person, Note, Event], safe=True) 
     print("Tables created!")
     DATABASE.close()
