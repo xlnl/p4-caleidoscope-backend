@@ -8,6 +8,7 @@ DATABASE = PostgresqlDatabase('caleidoscope', host='localhost', port=5432)
 class BaseModel(Model):
     class Meta: 
         database = DATABASE
+    
 
 class Person(UserMixin, BaseModel):
     username = CharField(unique=True)
@@ -16,6 +17,7 @@ class Person(UserMixin, BaseModel):
     city = CharField()
     country = CharField()
     zodiacSign = CharField()
+
 
 class Note(BaseModel):
     block = TextField()

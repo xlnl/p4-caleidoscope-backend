@@ -3,9 +3,11 @@ from flask_cors import CORS
 from flask_login import LoginManager
 
 import models
+from models import Person
 from resources.users import person
 from resources.notes import note
 from resources.events import event
+
 
 DEBUG = True
 PORT = 8000
@@ -22,8 +24,12 @@ login_manager.init_app(app)
 # callback for user_loader per flask auth docs; this will be called everytime a request comes from the server
 # loads the user from the user id stored in the session cookie
 @login_manager.user_loader
-def load_user(id):
-    return person.session.query.get(int(id))
+def load_user(person_id):
+    try:
+        print(person_id)
+        return Person.get(int(person_id))
+    except models.DoesNotExist:
+        return None 
 
 # middleware as concept -> flask way to connect db before request & close db after each request
 # """Connect to the database before each request."""
