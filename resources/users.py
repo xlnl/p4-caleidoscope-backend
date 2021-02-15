@@ -1,6 +1,6 @@
 import models
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, session
 from playhouse.shortcuts import model_to_dict
 from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
@@ -26,7 +26,8 @@ def register():
         payload['password'] = generate_password_hash(payload['password'])
         person = models.Person.create(**payload)
         
-        login_user(person)
+        login_user(user=person, remember=True)
+        session['logged_in']=True
 
         person_dict = model_to_dict(person)
 
@@ -49,7 +50,8 @@ def login():
         # check_password_hash(hashed_pw_from_db, unhashed_pw_from_payload)
         if(check_password_hash(person_dict['password'], payload['password'])):
             del person_dict['password']
-            login_user(person)
+            login_user(user=person, remember=True)
+            session['logged_in']=True
             return jsonify(
                 data=person_dict,
                 status={"code": 201, "message": "Success! Logged in user"})
@@ -63,6 +65,19 @@ def login():
             data={}, 
             status={"code": 401, 
                     "message": "Can't log in user - password or username is incorrect"})
+
+@person.route('/<username>', methods=["GET"])
+@login_required
+def profile(username):
+    username = current_user['username']
+    try:
+        person = models.Person.get(models.Person.username == username)
+        print(person)
+    except models.DoesNotExist:
+        return jsonify(
+            data={}, 
+            status={"code": 401, 
+                    "message": "Can't find user profile"})
 
 @person.route('/logout', methods=["GET", "POST"])
 @login_required

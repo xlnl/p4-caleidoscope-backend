@@ -19,6 +19,12 @@ app.config.from_pyfile('config.py')
 login_manager = LoginManager() # instantiating a new LoginManager in an app 
 login_manager.init_app(app)
 
+# callback for user_loader per flask auth docs; this will be called everytime a request comes from the server
+# loads the user from the user id stored in the session cookie
+@login_manager.user_loader
+def load_user(id):
+    return person.session.query.get(int(id))
+
 # middleware as concept -> flask way to connect db before request & close db after each request
 # """Connect to the database before each request."""
 @app.before_request
