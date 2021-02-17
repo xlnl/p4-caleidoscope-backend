@@ -54,6 +54,7 @@ def login():
             login_user(user = person, remember=True)
             session['logged_in'] = True
             session['person_id'] = person.id
+            print(person.id)
             return jsonify(
                 data=person_dict,
                 status={"code": 201, "message": "Success! Logged in user"})
@@ -68,26 +69,25 @@ def login():
             status={"code": 401, 
                     "message": "Can't log in user - password or username is incorrect"})
 
+# work on this later
 @person.route('/<username>', methods=["GET"])
 @login_required
-def profile(username):
-    username = current_user['username']
-    console.log(username)
+def get_profile():
     try:
-        person = models.Person.get(models.Person.username == username)
-        person_dict = model_to_dict(person)
-        return jsonify(
-            data=person_dict, 
-            status={"code": 201, "message": "Success"})
+        palettes = [model_to_dict(palettes) for palettes in \
+                    models.Palette.select() \
+                   .join_from(models.Palette, models.AppUser) \
+                   .where(models.AppUser.id == current_user.id) \
+                   .group_by(models.Palette.id)]
+        return jsonify(data=palettes, status={"code": 200, "message": "Success"})
     except models.DoesNotExist:
-        return jsonify(
-            data={}, 
-            status={"code": 401, 
-                    "message": "Can't find user profile"})
+        return jsonify(data={}, \
+                       status={"code": 401, "message": "Log in or sign up to view your palettes"})
 
 @person.route('/logout', methods=["GET", "POST"])
 @login_required
 def logout():
     session['logged_in'] = False
+    session.pop('person_id', None)
     logout_user()
     return jsonify(data={}, status={"code": 200, "message": "Successful"}) 

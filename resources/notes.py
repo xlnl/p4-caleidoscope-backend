@@ -11,6 +11,7 @@ note = Blueprint('notes', 'note')
 # - We have to do this because we cannot jsonify something from a "Model" class, so in order to respond /
 # to the client we must change our datatype from a Model Class to a Dictionary Class instance.
 @note.route('/', methods=["GET"])
+@login_required
 def get_all_notes():
     ## find the notes and change each one to a dictionary into a new array
     try:
@@ -28,6 +29,7 @@ def get_all_notes():
             status={"code": 401, "message": "Error getting the resources"})
 
 @note.route('/', methods=["POST"])
+@login_required
 def create_note():
     ## see request payload anagolous to req.body in express
     payload = request.get_json()
@@ -36,6 +38,7 @@ def create_note():
     return jsonify(data=note_dict, status={"code": 201, "message": "Success"})
 
 @note.route('/<note_id>', methods=["GET"])
+@login_required
 def get_note(note_id):
     try:
         note = models.Note.get_by_id(note_id)
@@ -49,6 +52,7 @@ def get_note(note_id):
             status={"code": 401, "message": "Error getting the resources"})
 
 @note.route('/<note_id>/update', methods=["PUT"])
+@login_required
 def update_note(note_id):
     try:
         payload = request.get_json()
@@ -64,6 +68,7 @@ def update_note(note_id):
             status={"code": 401, "message": "Error getting the resources"})
 
 @note.route('/<note_id>', methods=["Delete"])
+@login_required
 def delete_note(note_id):
     try: 
         note_to_delete = models.Note.get_by_id(note_id)

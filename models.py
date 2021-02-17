@@ -9,7 +9,6 @@ class BaseModel(Model):
     class Meta: 
         database = DATABASE
     
-
 class Person(UserMixin, BaseModel):
     username = CharField(unique=True)
     email = CharField(unique=True)
@@ -17,7 +16,6 @@ class Person(UserMixin, BaseModel):
     city = CharField()
     country = CharField()
     zodiacSign = CharField()
-
 
 class Note(BaseModel):
     block = TextField()
