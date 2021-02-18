@@ -12,6 +12,7 @@ event = Blueprint('events', 'event')
 @event.route('/', methods=["GET"])
 # debug with create route to ensure timecode gets deserialize 
 ## https://stackoverflow.com/questions/11875770/how-to-overcome-datetime-datetime-not-json-serializable
+@login_required
 def get_all_events():
     try:
         all_events = models.Event.select()
@@ -26,6 +27,7 @@ def get_all_events():
 
 @event.route('/', methods=["POST"])
 # figure out debugging this to deserialize timecodes for JSON 
+@login_required
 def create_event():
     ## see request payload anagolous to req.body in express
     payload = request.get_json()
@@ -34,6 +36,7 @@ def create_event():
     return jsonify(data=event_dict, status={"code": 201, "message": "Success"})
 
 @event.route('/<event_id>', methods=["GET"])
+@login_required
 def get_event(event_id):
     try:
         event = models.Event.get_by_id(event_id)
@@ -47,6 +50,7 @@ def get_event(event_id):
             status={"code": 401, "message": "Error getting the resources"})
 
 @event.route('/<event_id>/update', methods=["PUT"])
+@login_required
 def update_event(event_id):
     try:
         payload = request.get_json()
@@ -62,6 +66,7 @@ def update_event(event_id):
             status={"code": 401, "message": "Error getting the resources"})
 
 @event.route('/<event_id>', methods=["Delete"])
+@login_required
 def delete_event(event_id):
     try: 
         event_to_delete = models.Event.get_by_id(event_id)
