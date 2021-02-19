@@ -28,7 +28,7 @@ def get_all_notes():
             data={}, 
             status={"code": 401, "message": "Error getting the resources"})
 
-@note.route('/', methods=["POST"])
+@note.route('/new', methods=["POST"])
 @login_required
 def create_note():
     ## see request payload anagolous to req.body in express

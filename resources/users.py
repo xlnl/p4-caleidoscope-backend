@@ -70,30 +70,18 @@ def login():
                     "message": "Can't log in user - password or username is incorrect"})
 
 # work on this later
-# @person.route('/<username>', methods=["GET"])
-# @login_required
-# def get_profile():
-#     try:
-#         palettes = [model_to_dict(palettes) for palettes in \
-#                     models.Palette.select() \
-#                    .join_from(models.Palette, models.AppUser) \
-#                    .where(models.AppUser.id == current_user.id) \
-#                    .group_by(models.Palette.id)]
-#         return jsonify(data=palettes, status={"code": 200, "message": "Success"})
-#     except models.DoesNotExist:
-#         return jsonify(data={}, \
-#                        status={"code": 401, "message": "Log in or sign up to view your palettes"})
+@person.route('/profile', methods=["GET"])
+def get_person():
+    try:
+        person = [model_to_dict(person) for person in\
+                models.Person.select()\
+                .where(models.Person.id == current_user.id)] 
+        print('FROM GET ROUTE. UserId:', current_user.id)
+        return jsonify(data=person, status={"code": 200, "message": "Success"})
+    except models.DoesNotExist:
+        return jsonify(data={},\
+                       status={"code": 401, "message": "Log in or sign up to view your profile"})
 
-# @person.route('/', methods=["GET"])
-# def get_person():
-#     try:
-#         person = [model_to_dict(person) for person in \
-#                 models.Person.select() \
-#                 .where(models.Person.id == current_user.id)] 
-#         print('FROM GET ROUTE. UserId:', current_user.id)
-#         return jsonify(data=person, status={"code": 200, "message": "Success"})
-#     except models.DoesNotExist:
-#         return jsonify(data={}, \
 
 @person.route('/logout', methods=["GET", "POST"])
 @login_required
