@@ -17,7 +17,7 @@ PORT = 8000
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = "hewwohingadingadergen"
+app.config['SECRET_KEY'] = 'hewwohingadingadergen'
 app.config.from_pyfile('config.py')
 
 ############ vv "MIDDLEWARE" METHODS vv ##############
