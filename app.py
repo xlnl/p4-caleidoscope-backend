@@ -56,6 +56,10 @@ app.register_blueprint(event, url_prefix='/api/v1/event')
 def index():
     return "landing stub"
 
+if 'ON_HEROKU' in os.environ:
+    print('hitting ')
+    models.initialize()
+
 if __name__ == '__main__':
     models.initialize()
     app.run(debug=DEBUG, port=PORT)

@@ -1,9 +1,12 @@
 from peewee import *
 from flask_login import UserMixin, LoginManager
+import os
+from playhouse.db_url import connect
 
 import datetime
 
-DATABASE = PostgresqlDatabase('caleidoscope', host='localhost', port=5432)
+# DATABASE = PostgresqlDatabase('caleidoscope', host='localhost', port=5432)
+DATABASE = connect(os.environment.get('DATABASE_URL'))
 
 class BaseModel(Model):
     class Meta: 
