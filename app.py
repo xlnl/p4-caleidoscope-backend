@@ -57,7 +57,7 @@ def hello_world():
     resp = make_response("Hello, World!")
     return "Hello, this flask app is working!!!"
 
-CORS(app, origins=['http://localhost:3000','https://caleidscope-api.herokuapp.com'], supports_credentials=True) 
+CORS(app, origins=['http://localhost:3000','https://caleidscope-api.herokuapp.com','https://caleidoscope.herokuapp.com'], supports_credentials=True) 
 
 app.register_blueprint(person, url_prefix='/api/v1/user')
 app.register_blueprint(note, url_prefix='/api/v1/note')
