@@ -14,6 +14,7 @@ PORT = 8000
 
 app = Flask(__name__)
 
+app.config['SECRET_KEY'] = "hewwohingadingadergen"
 app.config.from_pyfile('config.py')
 
 ############ vv "MIDDLEWARE" METHODS vv ##############
@@ -35,15 +36,22 @@ def load_user(person_id):
 # """Connect to the database before each request."""
 @app.before_request
 def before_request():
+    app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
     g.db = models.DATABASE
     g.db.connect()
 
 # """Close the database connection after each request."""
 @app.after_request
 def after_request(response):
+    app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
     g.db = models.DATABASE
     g.db.close()
     return response
+
+@app.route('/')
+def hello_world():
+    resp = make_response("Hello, World!")
+    return "Hello, this flask app is working!!!"
 
 CORS(app, origins=['http://localhost:3000','https://caleidscope-api.herokuapp.com/'], supports_credentials=True) 
 
@@ -51,10 +59,10 @@ app.register_blueprint(person, url_prefix='/api/v1/user')
 app.register_blueprint(note, url_prefix='/api/v1/note')
 app.register_blueprint(event, url_prefix='/api/v1/event')
 # express equivalent = app.use('/api/v1/note')
+CORS(user)
+CORS(note)
+CORS(event)
 
-@app.route('/')
-def index():
-    return "landing stub"
 
 if 'ON_HEROKU' in os.environ:
     print('hitting ')
