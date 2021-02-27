@@ -25,7 +25,7 @@ def register():
         # if user doesn't exist, create user and bcrypt password
         payload['password'] = generate_password_hash(payload['password'])
         person = models.Person.create(**payload)
-        
+        session.pop('person_id', None)
         login_user(user=person, remember=True)
         session['logged_in'] = True
         session['person_id'] = person.id
@@ -54,6 +54,8 @@ def login():
             login_user(user = person, remember=True)
             session['logged_in'] = True
             session['person_id'] = person.id
+            session['username'] = person.username
+            g.user = person.username
             print(person.id)
             return jsonify(
                 data=person_dict,
@@ -86,7 +88,7 @@ def get_person():
 @person.route('/logout', methods=["GET", "POST"])
 @login_required
 def logout():
-    session['logged_in'] = False
     session.pop('person_id', None)
+    session.pop('logged_in', None)
     logout_user()
     return jsonify(data={}, status={"code": 200, "message": "Successful"}) 
