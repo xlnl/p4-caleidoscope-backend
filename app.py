@@ -3,7 +3,6 @@ from flask_cors import CORS
 from flask_login import LoginManager
 
 import os
-from playhouse.db_url import connect
 
 import models
 from models import Person
@@ -17,7 +16,6 @@ PORT = 8000
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'hewwohingadingadergen'
 app.config.from_pyfile('config.py')
 
 ############ vv "MIDDLEWARE" METHODS vv ##############
@@ -54,22 +52,18 @@ def after_request(response):
 
 @app.route('/')
 def hello_world():
-    resp = make_response("Hello, World!")
     return "Hello, this flask app is working!!!"
 
-CORS(app, origins=['http://localhost:3000','https://caleidscope-api.herokuapp.com','https://caleidoscope.herokuapp.com'], supports_credentials=True) 
+CORS(app, origins=['http://localhost:3000','https://caleidoscope.herokuapp.com'], supports_credentials=True) 
 
 app.register_blueprint(person, url_prefix='/api/v1/user')
 app.register_blueprint(note, url_prefix='/api/v1/note')
 app.register_blueprint(event, url_prefix='/api/v1/event')
 # express equivalent = app.use('/api/v1/note')
-CORS(user)
-CORS(note)
-CORS(event)
 
 
 if 'ON_HEROKU' in os.environ:
-    print('hitting ')
+    print('hitting heroku site!!')
     models.initialize()
 
 if __name__ == '__main__':
