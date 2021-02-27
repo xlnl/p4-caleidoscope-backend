@@ -18,7 +18,8 @@ PORT = 8000
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'hewwohingadingadergen'
-app.config.from_pyfile('config.py')
+cfg = os.path.join(os.getcwd(), 'p4-caleidoscope-backend', 'config', config_name + '.py')
+app.config.from_pyfile(cfg)
 
 ############ vv "MIDDLEWARE" METHODS vv ##############
 
