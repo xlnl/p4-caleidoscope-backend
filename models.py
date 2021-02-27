@@ -6,7 +6,7 @@ from playhouse.db_url import connect
 import datetime
 
 # DATABASE = PostgresqlDatabase('caleidoscope', host='localhost', port=5432)
-DATABASE = connect(os.environment.get('DATABASE_URL'))
+DATABASE = connect(os.environ.get('DATABASE_URL'))
 
 class BaseModel(Model):
     class Meta: 

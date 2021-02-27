@@ -45,7 +45,7 @@ def after_request(response):
     g.db.close()
     return response
 
-CORS(app, origins=['http://localhost:3000'], supports_credentials=True) 
+CORS(app, origins=['http://localhost:3000','https://caleidscope-api.herokuapp.com/'], supports_credentials=True) 
 
 app.register_blueprint(person, url_prefix='/api/v1/user')
 app.register_blueprint(note, url_prefix='/api/v1/note')
