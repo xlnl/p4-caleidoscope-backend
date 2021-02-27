@@ -1,3 +1,5 @@
+import os
+from playhouse.db_url import connect
 from flask import Flask, render_template, g
 from flask_cors import CORS
 from flask_login import LoginManager
@@ -44,6 +46,7 @@ def before_request():
 @app.after_request
 def after_request(response):
     app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
+    response.headers.add("Set-Cookie", f"my_cookie='a cookie'; Secure; SameSite=None;")
     g.db = models.DATABASE
     g.db.close()
     return response
