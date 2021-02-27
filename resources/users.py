@@ -86,7 +86,6 @@ def get_person():
 
 
 @person.route('/logout', methods=["GET", "POST"])
-@login_required
 def logout():
     session.pop('person_id', None)
     session.pop('logged_in', None)
