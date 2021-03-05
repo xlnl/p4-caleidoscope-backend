@@ -5,8 +5,8 @@ from playhouse.db_url import connect
 
 import datetime
 
-# DATABASE = PostgresqlDatabase('caleidoscope', host='localhost', port=5432)
-DATABASE = connect(os.environ.get('DATABASE_URL'))
+DATABASE = PostgresqlDatabase('caleidoscope', host='localhost', port=5432)
+# DATABASE = connect(os.environ.get('DATABASE_URL'))
 
 class BaseModel(Model):
     class Meta: 
@@ -37,6 +37,6 @@ class Event(BaseModel):
 
 def initialize():
     DATABASE.connect()
-    DATABASE.create_tables([Person, Note, Event], safe=True) 
+    DATABASE.create_tables([Person, Note, Event]) 
     print("Tables created!")
     DATABASE.close()

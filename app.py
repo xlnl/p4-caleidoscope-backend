@@ -1,5 +1,5 @@
 from flask import Flask, render_template, g, session, make_response
-from flask_cors import CORS
+from flask_cors import CORS, logging
 from flask_login import LoginManager
 
 import os
@@ -16,10 +16,14 @@ PORT = 8000
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY']=(os.environ.get('SECRET_KEY'))
+# app.config['SECRET_KEY']=(os.environ.get('SECRET_KEY'))
 app.config.from_pyfile('config.py')
 
 ############ vv "MIDDLEWARE" METHODS vv ##############
+
+CORS(app, origins=['http://localhost:3000','https://caleidoscope.herokuapp.com'], supports_credentials=True) 
+
+# express equivalent = app.use('/api/v1/note')
 
 login_manager = LoginManager() # instantiating a new LoginManager in an app 
 login_manager.init_app(app)
@@ -46,30 +50,28 @@ def before_request():
 @app.after_request
 def after_request(response):
     app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
-    response.headers.add("Set-Cookie", f"my_cookie='a cookie'; Secure; SameSite=None;")
+    response.headers.add("Set-Cookie", f"my_cookie='a cookie'; Secure; SameSite=None;","Access-Control-Allow-Origin", "*")
     g.db = models.DATABASE
     g.db.close()
     return response
 
-@app.route('/')
-def hello_world():
-    return "Hello, this flask app is working!!!"
-
-CORS(app, origins=['http://localhost:3000','https://caleidoscope.herokuapp.com'], supports_credentials=True) 
-CORS(person)
-CORS(event)
-CORS(note)
 
 app.register_blueprint(person, url_prefix='/api/v1/user')
 app.register_blueprint(note, url_prefix='/api/v1/note')
 app.register_blueprint(event, url_prefix='/api/v1/event')
-# express equivalent = app.use('/api/v1/note')
+CORS(person)
+CORS(event)
+CORS(note)
 
+@app.route('/')
+def hello_world():
+    return "Hello, this flask app is working!!!"
 
 if 'ON_HEROKU' in os.environ:
     print('hitting heroku site!!')
     models.initialize()
 
 if __name__ == '__main__':
+    app.secret_key = 'hewwohingadingadergen'
     models.initialize()
     app.run(debug=DEBUG, port=PORT)

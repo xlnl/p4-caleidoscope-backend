@@ -1,9 +1,10 @@
 import models
 
-from flask import Blueprint, jsonify, request, session, g
 from playhouse.shortcuts import model_to_dict
+from flask import Blueprint, jsonify, request, session, g
 from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
+from flask.sessions import SecureCookieSessionInterface
 
 person = Blueprint('persons', 'person')
 
@@ -11,28 +12,26 @@ person = Blueprint('persons', 'person')
 def register():
     ## see request payload anagolous to req.body in express
     payload = request.get_json()
-    payload['email'].lower()
     payload['username'].lower()
     
     try:
         # does the user already exist/is the username taken?
-        models.Person.get(models.Person.email == payload['email'])
+        models.Person.get(models.Person.username == payload['username'])
         return jsonify(
             data={}, 
             status={"code": 401, 
-                    "message": "A user with that email already exists"})
+                    "message": "A user with that username already exists"})
     except models.DoesNotExist:
         # if user doesn't exist, create user and bcrypt password
         payload['password'] = generate_password_hash(payload['password'])
         person = models.Person.create(**payload)
+        person_dict = model_to_dict(person)
+        del person_dict['password'] # don't expose password!
+        
         session.pop('person_id', None)
         login_user(user=person, remember=True)
         session['logged_in'] = True
-        session['person_id'] = person.id
-        person_dict = model_to_dict(person)
 
-        del person_dict['password'] # don't expose password!
-        
         return jsonify(
             data=person_dict, 
             status={"code": 201, "message": "Success! Created user"})
@@ -44,7 +43,6 @@ def login():
 
     try:
         person = models.Person.get(models.Person.username == payload['username'])
-
         person_dict = model_to_dict(person)
 
         # check_password_hash(hashed_pw_from_db, unhashed_pw_from_payload)
