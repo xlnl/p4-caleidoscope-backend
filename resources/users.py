@@ -73,12 +73,10 @@ def login():
 
 # work on this later
 @person.route('/profile', methods=["GET"])
+@login_required
 def get_person():
     try:
-        person = [model_to_dict(person) for person in\
-                models.Person.select()\
-                .where(models.Person.id == current_user.id)] 
-        print('FROM GET ROUTE. UserId:', current_user.id)
+        person_dict = model_to_dict(models.Person.get_by_id(current_user.id))
         return jsonify(data=person, status={"code": 200, "message": "Success"})
     except models.DoesNotExist:
         return jsonify(data={},\
@@ -86,6 +84,7 @@ def get_person():
 
 
 @person.route('/logout', methods=["GET", "POST"])
+@login_required
 def logout():
     session.pop('person_id', None)
     session.pop('logged_in', None)

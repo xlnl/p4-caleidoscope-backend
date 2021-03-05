@@ -16,6 +16,7 @@ PORT = 8000
 
 app = Flask(__name__)
 
+app.config['SECRET_KEY']=(os.environ.get('SECRET_KEY'))
 app.config.from_pyfile('config.py')
 
 ############ vv "MIDDLEWARE" METHODS vv ##############
@@ -55,6 +56,9 @@ def hello_world():
     return "Hello, this flask app is working!!!"
 
 CORS(app, origins=['http://localhost:3000','https://caleidoscope.herokuapp.com'], supports_credentials=True) 
+CORS(person)
+CORS(event)
+CORS(note)
 
 app.register_blueprint(person, url_prefix='/api/v1/user')
 app.register_blueprint(note, url_prefix='/api/v1/note')
